@@ -8,7 +8,7 @@ test('Gets a simple solution.', () => {
     const solution = newGame(players, myCards, 'a')
         |> addClaim({
             cards: [Card.Revolver, Card.Kitchen, Card.Plum],
-            claimant: 'b',
+            refuter: 'b',
             answer: ClaimAnswer.No,
             cardShown: null,
         })

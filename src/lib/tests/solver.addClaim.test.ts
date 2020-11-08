@@ -1,9 +1,10 @@
-import {newGame, addClaim, Card} from '../solver'
+import {newGame, addClaim, Card, ClaimAnswer} from '../solver'
 
 test('Adds a claim.', () => {
     const claim = {
         cards: [Card.Revolver, Card.Ballroom],
         refuter: 'b',
+        answer: ClaimAnswer.Yes,
         cardShown: Card.White,
     }
 

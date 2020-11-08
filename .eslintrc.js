@@ -25,6 +25,8 @@ module.exports = {
         'brace-style': 'off',
 
         // rules
+        'object-curly-newline': 'off',
+        'arrow-body-style': 'off',
         'max-len': 'off',
         'no-restricted-syntax': 'off',
         '@typescript-eslint/no-unsafe-member-access': 'off',

@@ -7,31 +7,31 @@ export enum PlayerCardState {
 
 export enum Card {
     // characters
-    White,
-    Scarlet,
-    Mustard,
-    Green,
-    Peacock,
-    Plum,
+    White = 'White',
+    Scarlet = 'Scarlet',
+    Mustard = 'Mustard',
+    Green = 'Green',
+    Peacock = 'Peacock',
+    Plum = 'Plum',
 
     // weapons
-    Revolver,
-    Dagger,
-    Pipe,
-    Rope,
-    Candlestick,
-    Wrench,
+    Revolver = 'Revolver',
+    Dagger = 'Dagger',
+    Pipe = 'Pipe',
+    Rope = 'Rope',
+    Candlestick = 'Candlestick',
+    Wrench = 'Wrench',
 
     // rooms
-    Kitchen,
-    Ballroom,
-    Conservatory,
-    DiningRoom,
-    BilliardRoom,
-    Library,
-    Lounge,
-    Hall,
-    Study,
+    Kitchen = 'Kitchen',
+    Ballroom = 'Ballroom',
+    Conservatory = 'Conservatory',
+    DiningRoom = 'DiningRoom',
+    BilliardRoom = 'BilliardRoom',
+    Library = 'Library',
+    Lounge = 'Lounge',
+    Hall = 'Hall',
+    Study = 'Study',
 }
 
 export enum ClaimAnswer {
@@ -41,7 +41,7 @@ export enum ClaimAnswer {
 
 interface Claim {
     cards: Array<Card>,
-    claimant: string,
+    refuter: string,
     answer: ClaimAnswer,
     cardShown: Card | null,
 }
@@ -69,36 +69,7 @@ interface SolutionResult {
 }
 
 interface Solution {
-    [Card.White]: SolutionResult,
-    [Card.Scarlet]: SolutionResult,
-    [Card.Mustard]: SolutionResult,
-    [Card.Green]: SolutionResult,
-    [Card.Peacock]: SolutionResult,
-    [Card.Plum]: SolutionResult,
-
-    // weapons
-    [Card.Revolver]: SolutionResult,
-    [Card.Dagger]: SolutionResult,
-    [Card.Pipe]: SolutionResult,
-    [Card.Rope]: SolutionResult,
-    [Card.Candlestick]: SolutionResult,
-    [Card.Wrench]: SolutionResult,
-
-    // rooms
-    [Card.Kitchen]: SolutionResult,
-    [Card.Ballroom]: SolutionResult,
-    [Card.Conservatory]: SolutionResult,
-    [Card.DiningRoom]: SolutionResult,
-    [Card.BilliardRoom]: SolutionResult,
-    [Card.Library]: SolutionResult,
-    [Card.Lounge]: SolutionResult,
-    [Card.Hall]: SolutionResult,
-    [Card.Study]: SolutionResult,
-}
-
-const getEnumNumericKeys = x => {
-    return Object.values(x)
-        .filter(val => !isNaN(Number(val)))
+    [key: string]: SolutionResult,
 }
 
 // assume the first player is 'me'
@@ -164,7 +135,7 @@ export const getSolution = (game: Game): Solution => {
     }
 
     // sets the indicated player's card state to yes and all other players card state to no
-    const setPlayerCardStateYes = (playerName, players) => {
+    const setPlayerCardStateYes = (playerName: string, players: SolutionResultPlayers): SolutionResultPlayers => {
         const playersCopy = {...players}
 
         for(const thisPlayerName of Object.keys(players)) {
@@ -177,7 +148,7 @@ export const getSolution = (game: Game): Solution => {
     const setMyCards = (game: Game) => (solution: Solution): Solution => {
         const solutionCopy = {...solution}
 
-        for(const card of getEnumNumericKeys(Card)) {
+        for(const card of Object.values(Card)) {
             const isMine = game.myCards.includes(card)
 
             solutionCopy[card] = {
@@ -201,14 +172,14 @@ export const getSolution = (game: Game): Solution => {
             if(claim.cardShown === null) {
                 // mark each card as maybe
                 for(const card of claim.cards) {
-                    acc[card].players[claim.claimant] = PlayerCardState.Maybe
+                    acc[card].players[claim.refuter] = PlayerCardState.Maybe
                 }
 
                 return acc
             }
             else {
                 // mark the card shown
-                acc[claim.cardShown].players[claim.claimant] = PlayerCardState.Yes
+                acc[claim.cardShown].players[claim.refuter] = PlayerCardState.Yes
 
                 return acc
             }
@@ -216,7 +187,7 @@ export const getSolution = (game: Game): Solution => {
         else {
             // make each card as no
             for(const card of claim.cards) {
-                acc[card].players[claim.claimant] = PlayerCardState.No
+                acc[card].players[claim.refuter] = PlayerCardState.No
             }
 
             return acc
@@ -249,15 +220,9 @@ export const getSolution = (game: Game): Solution => {
         [Card.Study]: createEmptySolutionResult(game.players),
     })
 
-    return setAnswers(game)
-        |> setMyCards(game)
-        |> setSolutionState
-
-    /*
     const solutionWithAnswers = setAnswers(game)
     const solutionWithMyCards = setMyCards(game)(solutionWithAnswers)
     const solutionWithState = setSolutionState(solutionWithMyCards)
 
     return solutionWithState
-    */
 }
